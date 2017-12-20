@@ -1,15 +1,15 @@
 /*
 * @Author: iss_roachd
 * @Date:   2017-12-02 09:49:07
-* @Last Modified by:   iss_roachd
-* @Last Modified time: 2017-12-12 10:38:47
+* @Last Modified by:   Daniel Roach
+* @Last Modified time: 2017-12-19 16:18:44
 */
 
 
 var CONSTANTS = {
 
 };
-CONSTANTS.VERSION = '1.0.0';
+CONSTANTS.VERSION = '0.0.9';
 
 // look at this fixed defaults override in previous version;
 CONSTANTS.DEFAULTS = {
@@ -36,6 +36,11 @@ CONSTANTS.ERRORS = {
 			name: "NO_CALLBACK",
 			code: 406,
 			desc: "no callback passed to network request"
+		},
+		RESPONSE_ERROR: {
+			name: "ERROR SERVER SIDE",
+			code: 407,
+			desc: "there was a error in server side php"
 		}
 	}
 };

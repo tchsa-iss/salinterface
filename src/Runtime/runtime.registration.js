@@ -1,8 +1,8 @@
 /*
 * @Author: iss_roachd
 * @Date:   2017-12-12 10:34:58
-* @Last Modified by:   iss_roachd
-* @Last Modified time: 2017-12-19 12:22:10
+* @Last Modified by:   Daniel Roach
+* @Last Modified time: 2017-12-19 15:35:17
 */
 
 var RegistrationError = require('../Error/Error.js');
@@ -10,7 +10,7 @@ var Networking = require('../Network/NetworkRequest.js');
 var UI = require('../UI/UI.js');
 function RegistrationApi() {
 	this.networking = new Networking();
-	this.ui = new UI();
+	this.ui = UI;
 }
 
 RegistrationApi.prototype.registerUser = function(event, data) {
@@ -18,26 +18,38 @@ RegistrationApi.prototype.registerUser = function(event, data) {
 	this.__showSpinner();
 	var form = this.__getUserFormData();
 	if (form.errors.length > 0) {
+		this.__hideSpinner();
 		this.__formRequirementErrors(form.errors);
+		this.ui.scrollToTop();
 		return;
 	}
 	var json = JSON.stringify(form.registrationData);
-	this.networking.request('register', function(error, response) {
+	this.networking.request('register', function(error, jsonResponse) {
 		if (error) {
 			this.userCreateError(error);
 			return;
 		}
-		this.userCreatedSuccess(response);
+		this.userCreatedSuccess(jsonResponse);
 	}.bind(this), json);
 	this.networking.execute('POST');
 }
 
-RegistrationApi.prototype.userCreatedSuccess = function(response) {
+RegistrationApi.prototype.userCreatedSuccess = function(json) {
+	var messageSuccess = this.ui.createHeadingWithSubHeader("Success: ", json.message, '2');
+	var messageWell =  this.ui.createWellWithContent(messageSuccess, 1);
+	var buttonLink = $('<a href="/" class="btn btn-primary btn-lg active" role="button">Click Here For Your Dashboard</a>');
+	messageWell.append(buttonLink);
+	var message = messageWell.append(messageWell);
+	$('.container').empty();
+	$('.container').append(message);
 	this.__hideSpinner();
 }
 
-RegistrationApi.userCreateError = function(error) {
+RegistrationApi.prototype.userCreateError = function(error) {
+	var errrorMessage = this.ui.createAlert(1, error);
+	$('.container').prepend(errrorMessage);
 	this.__hideSpinner();
+	this.ui.scrollToTop();
 }
 
 RegistrationApi.prototype.__getUserFormData = function() {

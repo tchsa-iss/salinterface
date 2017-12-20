@@ -1,8 +1,8 @@
 /*
 * @Author: iss_roachd
 * @Date:   2017-12-02 09:42:21
-* @Last Modified by:   iss_roachd
-* @Last Modified time: 2017-12-19 12:18:03
+* @Last Modified by:   Daniel Roach
+* @Last Modified time: 2017-12-19 15:14:30
 */
 
 var NetworkError = require('../Error/Error.js');
@@ -39,8 +39,9 @@ Network.prototype.execute = function(type) {
 		url: this.url,
 		context: this,
 		data: this.data,
-		success: function(responseData) {
-			this.callback(null, responseData);
+		success: function(data, textStatus, request) {
+			var contentType = request.getResponseHeader("content-type") || "";
+			this.callback(null, data);
 		},
 		error: function (jqXHR, exception, error) {
 	        var msg = '';
@@ -62,7 +63,8 @@ Network.prototype.execute = function(type) {
 	        var requestError = this.networkError.RESPONSE_ERROR;
 	        //log this 
 	        var errorObj = this.__handleError(requestError, msg);
-	        this.callback(error);
+	        var localErrorMessage = jqXHR.responseJSON && jqXHR.responseJSON.error || "Unknown Error";
+	        this.callback(localErrorMessage);
 	    },
 	})
 }
@@ -90,7 +92,7 @@ Network.prototype.__validateRequest = function(url, callback) {
 Network.prototype.__handleError = function(error, optionalMsg) {
 	// handle Error interallly and send back error to requester
 	if (optionalMsg) {
-		error.desc = optionalMsg;
+		return new NetworkError(error.name, error.code, error.desc, optionalMsg);
 	}
 	return new NetworkError(error.name, error.code, error.desc);
 }

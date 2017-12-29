@@ -2,14 +2,14 @@
 * @Author: iss_roachd
 * @Date:   2017-12-02 09:42:21
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2017-12-19 15:14:30
+* @Last Modified time: 2017-12-28 11:53:01
 */
 
 var NetworkError = require('../Error/Error.js');
 var Constants = require('../constants.js');
 
 function Network() {
-	this.networkError = Constants.ERRORS.NETWORK;
+	this.networkError = Constants.ERROR.NETWORK;
 }
 
 Network.prototype.request = function(url, callback, data) {

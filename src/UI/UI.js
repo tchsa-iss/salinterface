@@ -2,8 +2,10 @@
 * @Author: iss_roachd
 * @Date:   2017-12-19 10:34:42
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2017-12-19 14:58:41
+* @Last Modified time: 2017-12-28 12:30:41
 */
+
+var Constants = require('../constants.js');
 
 function UI() {
 	//this.jqueryApi =  window.$;
@@ -11,14 +13,36 @@ function UI() {
 };
 
 // defualt postion is top
-UI.prototype.flashMessage = function(possition, type, contentElement, parentElement) {
-	if (type) {
-		$(contentElement).addClass(type);
+UI.prototype.flashMessage = function(errorType, errorMsg, elementID) {
+	var type = Constants.ERROR.TYPE;
+	var flashMessage = null;
+	if (errorType === type.critical) {
+		flashMessage = $('<div class="alert alert-danger" role="alert" style="display:none">'+ errorMsg +'</div>');
 	}
-	if (possition) {
+	else if (errorType === type.major) {
+		flashMessage = $('<div class="alert alert-warning" role="alert" style="display:none">'+ errorMsg +'</div>');
+	}
+	else if (errorType === type.minor) {
 
 	}
-	$(parentElement).append(contentElement);
+	else if (errorType === type.warning) {
+
+	}
+	else if (errorType === type.info) {
+
+	}
+	else {
+
+	}
+
+	$(elementID).prepend(flashMessage);
+	flashMessage.show('blind');
+	setTimeout(function() {
+		flashMessage.hide('blind', 300, function() {
+			$(flashMessage).remove();
+		});
+
+	}.bind(flashMessage), 2000);
 }
 
 UI.prototype.scrollToTop = function(thisElementTop, position) {

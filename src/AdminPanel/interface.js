@@ -2,7 +2,7 @@
 * @Author: iss_roachd
 * @Date:   2017-12-01 12:39:17
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2017-12-22 15:31:26
+* @Last Modified time: 2017-12-28 17:01:34
 */
 
 (function() {
@@ -21,6 +21,8 @@ var Constants = require('../Constants.js');
 var AdminErrors = require('../Error/Error.js');
 var Networking = require('../Network/NetworkRequest.js');
 var Notification = require('../Notification/Notification.js');
+var EmployeeInterface = require('./Employees/interface.employees.js');
+var UI = require('../UI/UI.js');
 
 /**
  * 
@@ -62,7 +64,7 @@ AdminInterface.prototype.publish = function(eventName, args1, arg2, arg3) {
  */
 AdminInterface.prototype.showLogs = function(type, callback) {
 	var request = new Networking();
-	request.request("admin/logs/ALL", function(error, json) {
+	request.request("admin/logs/app-logs", function(error, json) {
 		if (!error) {
 			var jsonArray = json.split('\n');
 			jsonArray.clean("");
@@ -71,17 +73,9 @@ AdminInterface.prototype.showLogs = function(type, callback) {
 				var table = this.__createTableWithJson(jsonData);
 				$('#log-content-table').DataTable();
 			}.bind(this), 200);
-			//var table = this.__createTableWithJson(jsonData);
-			//table.DataTable();
-			//$(table).DataTable();
-			//$('#log-menu').append(table);
-			// $('#log-menu').append(table);
-			// setTimeout(function() {
-			//$('#log-content-table').DataTable();
-			// }, 1000);
 		 	return;
 		}
-		return error.desc();
+		UI.flashMessage(Constants.ERROR.TYPE.major, error, '#dashboard-main');
 	}.bind(this));
 	request.execute();
 };
@@ -90,18 +84,35 @@ AdminInterface.prototype.callMethod = function(name, args, callback) {
 	
 }
 
+AdminInterface.prototype.empoyeeInterface = function(method, args) {
+	EmployeeInterface[method](args);
+}
+
+AdminInterface.prototype.logsInterface = function(method, args) {
+	EmployeeInterface[method](args);
+}
+
 /**
  * @return {[type]}
  */
 
 AdminInterface.prototype.showMenuTab = function(id) {
 	this.hideActiveTab(null, function() {
-		$(id).show("slide", 150);
+		$(id).show("slide", 150, function() {
+			this.kickStartSubmenu(id);
+		}.bind(this));
+
 		this.activeMenu = id;
-		if (id === '#log-menu') {
-			this.showLogs();
-		}
 	}.bind(this));
+}
+
+AdminInterface.prototype.kickStartSubmenu = function(id) {
+	if (id === '#log-menu') {
+		this.showLogs();
+	}
+	if (id === '#employees-menu') {
+
+	}
 }
 
 AdminInterface.prototype.hideActiveTab = function(element, done) {

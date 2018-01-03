@@ -2,15 +2,15 @@
 * @Author: Daniel Roach
 * @Date:   2017-12-20 12:18:27
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2017-12-28 16:30:37
+* @Last Modified time: 2018-01-02 16:31:14
 */
 
-var Constant = require('../../constants');
+var Constants = require('../../constants');
 var Networking = require('../../Network/NetworkRequest.js');
 var UI = require('../../UI/UI.js');
 
 function EmployeeInterface() {
-	this.services = Constant.SERVICES;
+	this.services = Constants.SERVICES;
 }
 
 EmployeeInterface.prototype.show = function(employees) {
@@ -44,26 +44,10 @@ EmployeeInterface.prototype.all = function() {
 			});
 			return;
 		}
-		UI.flashMessage(Constants.ERROR.TYPE.major, error, '#dashboard-main');
+		UI.flashMessage(Constants.ERROR.TYPE.major, error, '#dashboard-main', 500);
 	});
 	all.execute();
 }
-
-// EmployeeInterface.prototype.all = function() {
-// 	var all = new Networking();
-// 	all.request("admin/employees/all", function(error, json) {
-// 		if (!error) {
-// 			// var jsonArray = json.split('\n');
-// 			// jsonArray.clean("");
-// 			// var jsonData = jsonArray.map(JSON.parse);
-// 			// setTimeout(function() {
-// 			// 	var table = this.__createTableWithJson(jsonData);
-// 			// 	$('#log-content-table').DataTable();
-// 			// }.bind(this), 200);
-// 		 // 	return;
-// 		}
-// 	}
-// }
 
 EmployeeInterface.prototype.fiscal = function() {
 

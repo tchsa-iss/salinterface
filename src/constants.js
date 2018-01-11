@@ -2,7 +2,7 @@
 * @Author: iss_roachd
 * @Date:   2017-12-02 09:49:07
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2017-12-19 16:18:44
+* @Last Modified time: 2018-01-06 16:11:55
 */
 
 
@@ -20,7 +20,36 @@ CONSTANTS.NOTIFICATION_EVENTS = {
 	userMessage: "UserMessage"
 };
 
-CONSTANTS.ERRORS = {
+CONSTANTS.SERVICES = {
+	all: 1,
+	fiscal: 2,
+	clinic: 3,
+	behviorHealth: 4,
+	substanceAbuse: 5
+},
+CONSTANTS.LOGTYPES = {
+	AVAILABLE: [
+		'app-logs',
+		'sal-api-logs',
+		'timeips-api-logs'
+	]
+},
+
+CONSTANTS.STATUS = {
+	TYPE: {
+		successPrimary : 'alert-primary',
+		successSecodary: 'alert-secondary',
+		successInfo: 'alert-info',
+		success: 'alert-sucess'
+	}
+}
+
+CONSTANTS.ERROR = {
+	TYPE: {
+		critical: 'alert-danger',
+		major: 'alert-warning',
+		info: 'alert-info'
+	},
 	NETWORK: {
 		NO_RESPONSE: {
 			name: "NO_RESPONSE",

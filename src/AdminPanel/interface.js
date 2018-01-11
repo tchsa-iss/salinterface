@@ -2,7 +2,7 @@
 * @Author: iss_roachd
 * @Date:   2017-12-01 12:39:17
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2017-12-22 15:31:26
+* @Last Modified time: 2018-01-06 17:47:27
 */
 
 (function() {
@@ -21,6 +21,10 @@ var Constants = require('../Constants.js');
 var AdminErrors = require('../Error/Error.js');
 var Networking = require('../Network/NetworkRequest.js');
 var Notification = require('../Notification/Notification.js');
+var EmployeeInterface = require('./Employees/interface.employees.js');
+var DatabaseInterface = require('./Database/interface.database.js');
+var LogInterface = require('./Logs/interface.logs.js');
+var UI = require('../UI/UI.js');
 
 /**
  * 
@@ -55,39 +59,46 @@ AdminInterface.prototype.publish = function(eventName, args1, arg2, arg3) {
 
 }
 
-/**
- * @param  {[type]}
- * @param  {Function}
- * @return {[type]}
- */
-AdminInterface.prototype.showLogs = function(type, callback) {
-	var request = new Networking();
-	request.request("admin/logs/ALL", function(error, json) {
-		if (!error) {
-			var jsonArray = json.split('\n');
-			jsonArray.clean("");
-			var jsonData = jsonArray.map(JSON.parse);
-			setTimeout(function() {
-				var table = this.__createTableWithJson(jsonData);
-				$('#log-content-table').DataTable();
-			}.bind(this), 200);
-			//var table = this.__createTableWithJson(jsonData);
-			//table.DataTable();
-			//$(table).DataTable();
-			//$('#log-menu').append(table);
-			// $('#log-menu').append(table);
-			// setTimeout(function() {
-			//$('#log-content-table').DataTable();
-			// }, 1000);
-		 	return;
-		}
-		return error.desc();
-	}.bind(this));
-	request.execute();
-};
-
 AdminInterface.prototype.callMethod = function(name, args, callback) {
 	
+}
+
+AdminInterface.prototype.empoyeeInterface = function(method, args, callback) {
+	EmployeeInterface[method](args, callback);
+}
+
+AdminInterface.prototype.logInterface = function(method, args) {
+	LogInterface[method](args);
+}
+
+AdminInterface.prototype.databaseInterface = function(method, args, callback) {
+	DatabaseInterface[method](args, callback);
+}
+
+AdminInterface.prototype.add = function(target, errorView) {
+
+}
+
+AdminInterface.prototype.modify = function(target, errorView) {
+	var error = null;
+	var table = $(target).DataTable();
+	if (table.rows('.info').data().length < 1) {
+		var message = "Please Select At Least One Row To Modify";
+		UI.flashMessage(Constants.ERROR.TYPE.major, message, errorView, 500);
+		error = true;
+	}
+	return error;
+}
+
+AdminInterface.prototype.delete = function(target, errorView) {
+	var error = null;
+	var table = $(target).DataTable();
+	if (table.rows('.info').data().length < 1) {
+		var message = "Please Select At Least One Row To Delete";
+		UI.flashMessage(Constants.ERROR.TYPE.critical, message, errorView, 500);
+		error = true;
+	}
+	return error;
 }
 
 /**
@@ -96,12 +107,21 @@ AdminInterface.prototype.callMethod = function(name, args, callback) {
 
 AdminInterface.prototype.showMenuTab = function(id) {
 	this.hideActiveTab(null, function() {
-		$(id).show("slide", 150);
+		$(id).show("slide", 150, function() {
+			this.kickStartSubmenu(id);
+		}.bind(this));
+
 		this.activeMenu = id;
-		if (id === '#log-menu') {
-			this.showLogs();
-		}
 	}.bind(this));
+}
+
+AdminInterface.prototype.kickStartSubmenu = function(id) {
+	if (id === '#log-menu') {
+		//this.showLogs();
+	}
+	if (id === '#employees-menu') {
+
+	}
 }
 
 AdminInterface.prototype.hideActiveTab = function(element, done) {
@@ -119,14 +139,12 @@ AdminInterface.prototype.hideActiveTab = function(element, done) {
 	}
 }
 
-AdminInterface.prototype.expandSubMenu = function(id) {
-	this.activeSubMenu = id;
-	this.createDataTable('#service-units-table');
-	$(id).toggle('blind', 200);
+AdminInterface.prototype.expandSubMenu = function(id, callback) {
+	$(id).show('blind', 200, callback);
 }
 
-AdminInterface.prototype.collapseSubMenu = function(id) {
-
+AdminInterface.prototype.collapseSubMenu = function(id, callback) {
+	$(id).hide('blind', 200, callback);
 }
 
 AdminInterface.prototype.createDataTable = function(id) {

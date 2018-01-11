@@ -2,23 +2,29 @@
 * @Author: iss_roachd
 * @Date:   2017-12-19 10:34:42
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2017-12-19 14:58:41
+* @Last Modified time: 2018-01-07 10:03:36
 */
+
+var Constants = require('../constants.js');
 
 function UI() {
 	//this.jqueryApi =  window.$;
-
 };
 
 // defualt postion is top
-UI.prototype.flashMessage = function(possition, type, contentElement, parentElement) {
-	if (type) {
-		$(contentElement).addClass(type);
-	}
-	if (possition) {
+UI.prototype.flashMessage = function(type, errorMsg, elementID, duration) {
+	//var type = Constants.ERROR.TYPE;
+	var duration = duration || 300;
+	var flashMessage = $('<div class="alert '+type+'" role="alert" style="display:none">'+ errorMsg +'</div>');
 
-	}
-	$(parentElement).append(contentElement);
+	$(elementID).prepend(flashMessage);
+	flashMessage.show('blind');
+	setTimeout(function() {
+		flashMessage.hide('blind', duration, function() {
+			$(flashMessage).remove();
+		});
+
+	}.bind(flashMessage), 2000);
 }
 
 UI.prototype.scrollToTop = function(thisElementTop, position) {
@@ -64,6 +70,16 @@ UI.prototype.createAlert = function(type, message) {
 		div.addClass("alert alert-danger");
 	}
 	return div;
+}
+
+UI.prototype.selectSingleTableRow = function(event) {
+	if ($(this).hasClass('info')) {
+    	$(this).removeClass('info');
+    }
+    else {
+        event.data.table.$('tr.info').removeClass('info');
+        $(this).addClass('info');
+    }
 }
 
 module.exports = new UI();

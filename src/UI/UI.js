@@ -2,39 +2,20 @@
 * @Author: iss_roachd
 * @Date:   2017-12-19 10:34:42
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2018-01-02 09:33:36
+* @Last Modified time: 2018-01-07 10:03:36
 */
 
 var Constants = require('../constants.js');
 
 function UI() {
 	//this.jqueryApi =  window.$;
-
 };
 
 // defualt postion is top
-UI.prototype.flashMessage = function(errorType, errorMsg, elementID, duration) {
-	var type = Constants.ERROR.TYPE;
+UI.prototype.flashMessage = function(type, errorMsg, elementID, duration) {
+	//var type = Constants.ERROR.TYPE;
 	var duration = duration || 300;
-	var flashMessage = null;
-	if (errorType === type.critical) {
-		flashMessage = $('<div class="alert alert-danger" role="alert" style="display:none">'+ errorMsg +'</div>');
-	}
-	else if (errorType === type.major) {
-		flashMessage = $('<div class="alert alert-warning" role="alert" style="display:none">'+ errorMsg +'</div>');
-	}
-	else if (errorType === type.minor) {
-
-	}
-	else if (errorType === type.warning) {
-
-	}
-	else if (errorType === type.info) {
-
-	}
-	else {
-
-	}
+	var flashMessage = $('<div class="alert '+type+'" role="alert" style="display:none">'+ errorMsg +'</div>');
 
 	$(elementID).prepend(flashMessage);
 	flashMessage.show('blind');
@@ -89,6 +70,16 @@ UI.prototype.createAlert = function(type, message) {
 		div.addClass("alert alert-danger");
 	}
 	return div;
+}
+
+UI.prototype.selectSingleTableRow = function(event) {
+	if ($(this).hasClass('info')) {
+    	$(this).removeClass('info');
+    }
+    else {
+        event.data.table.$('tr.info').removeClass('info');
+        $(this).addClass('info');
+    }
 }
 
 module.exports = new UI();

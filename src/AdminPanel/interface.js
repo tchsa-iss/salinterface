@@ -2,7 +2,7 @@
 * @Author: iss_roachd
 * @Date:   2017-12-01 12:39:17
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2018-01-02 15:07:41
+* @Last Modified time: 2018-01-06 17:47:27
 */
 
 (function() {
@@ -63,8 +63,8 @@ AdminInterface.prototype.callMethod = function(name, args, callback) {
 	
 }
 
-AdminInterface.prototype.empoyeeInterface = function(method, args) {
-	EmployeeInterface[method](args);
+AdminInterface.prototype.empoyeeInterface = function(method, args, callback) {
+	EmployeeInterface[method](args, callback);
 }
 
 AdminInterface.prototype.logInterface = function(method, args) {
@@ -73,6 +73,32 @@ AdminInterface.prototype.logInterface = function(method, args) {
 
 AdminInterface.prototype.databaseInterface = function(method, args, callback) {
 	DatabaseInterface[method](args, callback);
+}
+
+AdminInterface.prototype.add = function(target, errorView) {
+
+}
+
+AdminInterface.prototype.modify = function(target, errorView) {
+	var error = null;
+	var table = $(target).DataTable();
+	if (table.rows('.info').data().length < 1) {
+		var message = "Please Select At Least One Row To Modify";
+		UI.flashMessage(Constants.ERROR.TYPE.major, message, errorView, 500);
+		error = true;
+	}
+	return error;
+}
+
+AdminInterface.prototype.delete = function(target, errorView) {
+	var error = null;
+	var table = $(target).DataTable();
+	if (table.rows('.info').data().length < 1) {
+		var message = "Please Select At Least One Row To Delete";
+		UI.flashMessage(Constants.ERROR.TYPE.critical, message, errorView, 500);
+		error = true;
+	}
+	return error;
 }
 
 /**

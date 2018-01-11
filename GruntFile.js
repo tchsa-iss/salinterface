@@ -33,6 +33,15 @@ module.exports = function(grunt) {
         }
       },
     },
+    watch: {
+      scripts: {
+        files: ['src/**/*.js'],
+        tasks: ['build-dev'],
+        options: {
+          spawn: false,
+        },
+      },
+    },
     clean: {
       build: ['<%= build_directory %>'],
     },
@@ -94,6 +103,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-shell');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Default task(s).
   grunt.registerTask('default', ['uglify']);

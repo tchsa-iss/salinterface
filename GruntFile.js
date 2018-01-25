@@ -49,8 +49,8 @@ module.exports = function(grunt) {
       transterAdmin: {
         command: 'copy build\\dev\\AdminInterface.js C:\\inetpub\\wwwroot\\eSalWebApp\\public\\js'
       },
-      transferSuperviser: {
-        command: 'copy build\\dev\\SuperviserInterface.js C:\\inetpub\\wwwroot\\eSalWebApp\\public\\js'
+      transferSupervisor: {
+        command: 'copy build\\dev\\SupervisorInterface.js C:\\inetpub\\wwwroot\\eSalWebApp\\public\\js'
       },
       transferUser: {
         command: 'copy build\\dev\\UserInterface.js C:\\inetpub\\wwwroot\\eSalWebApp\\public\\js'
@@ -73,14 +73,14 @@ module.exports = function(grunt) {
       dist: {
         files: {
           'build/dev/UserInterface.js': ['src/Runtime/runtime.user.js'],
-          'build/dev/SuperviserInterface.js': ['src/Runtime/runtime.superviser.js'],
+          'build/dev/SupervisorInterface.js': ['src/Runtime/runtime.supervisor.js'],
           'build/dev/AdminInterface.js': ['src/Runtime/runtime.admin.js']
         }
       },
       dev: {
         files: {
           'build/dev/UserInterface.js': ['src/Runtime/runtime.user.js'],
-          'build/dev/SuperviserInterface.js': ['src/Runtime/runtime.superviser.js'],
+          'build/dev/SupervisorInterface.js': ['src/Runtime/runtime.supervisor.js'],
           'build/dev/AdminInterface.js': ['src/Runtime/runtime.admin.js'],
           'build/dev/Registration.js': ['src/Runtime/runtime.registration.js']
         }
@@ -108,6 +108,6 @@ module.exports = function(grunt) {
   // Default task(s).
   grunt.registerTask('default', ['uglify']);
   grunt.registerTask('docs', ['jsdoc']);
-  grunt.registerTask('build-dev', ['clean:build', 'browserify:dev', 'shell:transterAdmin', 'shell:transferSuperviser', 'shell:transferUser', 'shell:transferReg']);
+  grunt.registerTask('build-dev', ['clean:build', 'browserify:dev', 'shell:transterAdmin', 'shell:transferSupervisor', 'shell:transferUser', 'shell:transferReg']);
   grunt.registerTask('show-docs', ['docs','connect:docs']);
 };

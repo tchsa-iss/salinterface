@@ -2,7 +2,7 @@
 * @Author: Daniel Roach
 * @Date:   2018-01-04 16:15:47
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2018-01-04 16:24:22
+* @Last Modified time: 2018-01-12 11:51:40
 */
 
 var Utils = function() {
@@ -17,6 +17,10 @@ Utils.dataTableExists = function(target) {
   		return false
 	}
 	return true;
+}
+
+Utils.combineTwoStrings = function(string1, string2) {
+	return string1 + ' ' + string2;
 }
 
 module.exports = Utils;

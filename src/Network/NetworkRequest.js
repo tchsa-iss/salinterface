@@ -2,14 +2,15 @@
 * @Author: iss_roachd
 * @Date:   2017-12-02 09:42:21
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2017-12-19 15:14:30
+* @Last Modified time: 2018-01-04 09:48:17
 */
 
 var NetworkError = require('../Error/Error.js');
 var Constants = require('../constants.js');
 
 function Network() {
-	this.networkError = Constants.ERRORS.NETWORK;
+	this.networkError = Constants.ERROR.NETWORK;
+	this.id = null;
 }
 
 Network.prototype.request = function(url, callback, data) {
@@ -22,6 +23,8 @@ Network.prototype.request = function(url, callback, data) {
 	this.url = url;
 	this.callback = callback;
 	this.data = data;
+	this.id = this.__generateNetworkRequestId();
+	return this.id;
 }
 
 Network.prototype.setHeaders = function(args) {
@@ -41,7 +44,7 @@ Network.prototype.execute = function(type) {
 		data: this.data,
 		success: function(data, textStatus, request) {
 			var contentType = request.getResponseHeader("content-type") || "";
-			this.callback(null, data);
+			this.callback(null, data, this.id);
 		},
 		error: function (jqXHR, exception, error) {
 	        var msg = '';
@@ -63,10 +66,20 @@ Network.prototype.execute = function(type) {
 	        var requestError = this.networkError.RESPONSE_ERROR;
 	        //log this 
 	        var errorObj = this.__handleError(requestError, msg);
-	        var localErrorMessage = jqXHR.responseJSON && jqXHR.responseJSON.error || "Unknown Error";
-	        this.callback(localErrorMessage);
+	        var localErrorMessage = jqXHR.responseJSON && jqXHR.responseJSON.error || "Unknown Error Please Contact Your IT Department";
+	        this.callback(localErrorMessage, this.id);
 	    },
 	})
+}
+
+Network.prototype.__generateNetworkRequestId = function() {
+	function uuidv4() {
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+	    	var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+	    	return v.toString(16);
+		});
+	}
+	return uuidv4();
 }
 
 Network.prototype.__validateRequest = function(url, callback) {

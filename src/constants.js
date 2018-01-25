@@ -2,7 +2,7 @@
 * @Author: iss_roachd
 * @Date:   2017-12-02 09:49:07
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2018-01-06 16:11:55
+* @Last Modified time: 2018-01-19 11:53:04
 */
 
 
@@ -14,6 +14,12 @@ CONSTANTS.VERSION = '0.0.9';
 // look at this fixed defaults override in previous version;
 CONSTANTS.DEFAULTS = {
 	name: 'eSalWebAppJS',
+};
+
+CONSTANTS.MODAL = {
+	addSupervisor: 1,
+	assignSupervisor: 2,
+	removeEmployeeSupervisor: 3
 };
 
 CONSTANTS.NOTIFICATION_EVENTS = {
@@ -40,7 +46,7 @@ CONSTANTS.STATUS = {
 		successPrimary : 'alert-primary',
 		successSecodary: 'alert-secondary',
 		successInfo: 'alert-info',
-		success: 'alert-sucess'
+		success: 'alert-success'
 	}
 }
 

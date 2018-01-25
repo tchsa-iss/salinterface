@@ -2,7 +2,7 @@
 * @Author: Daniel Roach
 * @Date:   2018-01-10 16:26:17
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2018-01-10 16:57:34
+* @Last Modified time: 2018-01-25 12:40:53
 */
 
 var Constants = require('../../constants');
@@ -25,7 +25,8 @@ TeamInterface.prototype.getTeamMembers =function(tableName, refresh) {
 		}
 		var table = $(tableName).DataTable( {
 			data: json,
-			"scrollX": true,
+			scrollX: true,
+			scrollY: '50vh',
 		    columns: [
 		        { data: 'UserID' },
 		        { data: 'name' },

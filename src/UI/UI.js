@@ -2,7 +2,7 @@
 * @Author: iss_roachd
 * @Date:   2017-12-19 10:34:42
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2018-01-07 10:03:36
+* @Last Modified time: 2018-01-17 14:35:12
 */
 
 var Constants = require('../constants.js');
@@ -70,6 +70,13 @@ UI.prototype.createAlert = function(type, message) {
 		div.addClass("alert alert-danger");
 	}
 	return div;
+}
+
+UI.prototype.isSelected = function(table) {
+	if (table.rows('.info').data().length < 1) {
+		return false;
+	}
+	return true;
 }
 
 UI.prototype.selectSingleTableRow = function(event) {

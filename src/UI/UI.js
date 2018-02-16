@@ -2,10 +2,11 @@
 * @Author: iss_roachd
 * @Date:   2017-12-19 10:34:42
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2018-01-17 14:35:12
+* @Last Modified time: 2018-02-16 12:35:53
 */
 
 var Constants = require('../constants.js');
+var Utils = require('../Utils/Utils.js');
 
 function UI() {
 	//this.jqueryApi =  window.$;
@@ -20,11 +21,11 @@ UI.prototype.flashMessage = function(type, errorMsg, elementID, duration) {
 	$(elementID).prepend(flashMessage);
 	flashMessage.show('blind');
 	setTimeout(function() {
-		flashMessage.hide('blind', duration, function() {
+		flashMessage.hide('blind', 300, function() {
 			$(flashMessage).remove();
 		});
 
-	}.bind(flashMessage), 2000);
+	}.bind(flashMessage), duration);
 }
 
 UI.prototype.scrollToTop = function(thisElementTop, position) {
@@ -79,6 +80,14 @@ UI.prototype.isSelected = function(table) {
 	return true;
 }
 
+UI.prototype.tableRowIsSelected = function(tableName) {
+	var table = $(tableName).DataTable();
+	if (table.rows('.info').data().length < 1) {
+		return false;
+	}
+	return true;
+}
+
 UI.prototype.selectSingleTableRow = function(event) {
 	if ($(this).hasClass('info')) {
     	$(this).removeClass('info');
@@ -87,6 +96,107 @@ UI.prototype.selectSingleTableRow = function(event) {
         event.data.table.$('tr.info').removeClass('info');
         $(this).addClass('info');
     }
+}
+
+UI.prototype.closeSalView = function(view, done) {
+	if (view === 'open') {
+		$('#open-sals-panel').hide();
+		$('#sal-open-table-container').hide();
+		//done();
+		// $('#sal-open-table-container').hide('blind', 500, function() {
+		// 	$('#open-sals-panel').hide('blind', 600, done);
+		// });
+	}
+	if (view === 'pending') {
+		$('#pending-sals-panel').hide();
+		$('#sal-pending-table-container').hide();
+		//done();
+	}
+	if (view === 'approved') {
+		//$('#pending-sals-panel').hide();
+		$('#member-sal-approved-table-container').hide();
+	}
+	if (view === 'closed') {
+		
+	}
+	if (view === 'corrections') {
+		$('#member-sal-correction-table-container').hide();
+	}
+	if (view === 'approvals') {
+		$('#member-sal-approval-table-container').hide();
+		$('#member-time-compare').hide();
+		$('#panel-approval-sals').hide();
+	}
+	done();
+}
+
+UI.prototype.checkForTimePanel = function(container) {
+	var timePanel = $(container).find('.sal-time-compare');
+	if (timePanel.length === 0) {
+		return false;
+	}
+	return timePanel;
+}
+
+UI.prototype.updateTimePanelColors = function(memberPanel, timeIpsPanel, isOff) {
+	var member = memberPanel.find('.panel-heading');
+	var timeIps = timeIpsPanel.find('.panel-heading');
+	if (isOff) {
+		memberPanel.css({"border-color": "#d9534f"});
+		timeIpsPanel.css({"border-color": "#d9534f"});
+		member.css({"background-color": "rgb(217,83,79)"});  //removeClass("time-entries-danger").addClass( "time-entries-danger" );
+		timeIps.css({"background-color": "rgb(217,83,79)"}); //removeClass("time-entries-danger").addClass( "time-entries-danger" );
+		return;
+	}
+	memberPanel.css({"border-color": "#337ab7"});
+	timeIpsPanel.css({"border-color": "#337ab7"});
+	member.css({"background-color": "rgb(51, 122, 183)"});
+	timeIps.css({"background-color": "rgb(51, 122, 183)"});
+}
+
+UI.prototype.updateUserTimeComparePanel = function(entries, timePanel, timeIPSTime) {
+	var memberTimePanel = timePanel.find('.member-time');
+	var timeIpsTimePanel = timePanel.find('.timeips-time');
+	var memberTimeMinutes = memberTimePanel.find('p[name="minutes"]');
+	var memberTimeHours = memberTimePanel.find('p[name="hours"]');
+	var timeIpsTimeMinutes =  timeIpsTimePanel.find('p[name="minutes"]');
+	var timeIpsTimeHours = timeIpsTimePanel.find('p[name="hours"]');
+	var memberData = memberTimeMinutes.data();
+	memberData.minutes.time = 0;
+	//memberData.minutes.time;
+	for (var i = 0; i < entries.length; i++) {
+		var entry = entries[i];
+		memberData.minutes.time += entry.TimeSpent;
+	}
+	var offset = timeIPSTime.minutes - memberData.minutes.time;
+	var timeError = false;
+
+	if (offset > 1 || offset < -1) {
+		timeError = true;
+	}
+	this.updateTimePanelColors(memberTimePanel, timeIpsTimePanel, timeError);
+
+	memberTimeMinutes.text(memberData.minutes.time);
+	memberTimeHours.text(Utils.convertMinutesToHours(memberData.minutes.time));
+	timeIpsTimeMinutes.text(timeIPSTime.minutes);
+	timeIpsTimeHours.text(timeIPSTime.hours);
+}
+
+
+UI.prototype.runProgress = function(progressView, done) {
+	var progressBar = progressView.find('.progress-bar');
+	var now = 0;
+	var progressContext = setInterval(function() {
+		// if (now === 75) {
+		// 	done();
+		// }
+		if(now >= 100) {
+			clearInterval(progressContext);
+			done();
+		}
+		progressBar.css("width", now + "%");
+		now = now + 5;
+	}, 50);
 }
 
 module.exports = new UI();

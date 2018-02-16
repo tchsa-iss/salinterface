@@ -2,7 +2,7 @@
 * @Author: iss_roachd
 * @Date:   2017-12-02 09:49:07
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2018-01-19 11:53:04
+* @Last Modified time: 2018-02-06 13:32:34
 */
 
 
@@ -22,8 +22,24 @@ CONSTANTS.MODAL = {
 	removeEmployeeSupervisor: 3
 };
 
-CONSTANTS.NOTIFICATION_EVENTS = {
-	userMessage: "UserMessage"
+CONSTANTS.OPTION = {
+	QUERY: {
+		today: 0,
+		week: 1,
+		month: 2,
+		range: 3
+	}
+};
+
+CONSTANTS.EVENT = {
+	userMessage: "UserMessage",
+	submit: {
+		open: "SalOpenSubmit",
+		pending: "SalPendingSubmit",
+		approved: "SalApprovedSubmit",
+		closed: "SalClosed",
+		corrections: "SalCorrectionSubmit"
+	}
 };
 
 CONSTANTS.SERVICES = {

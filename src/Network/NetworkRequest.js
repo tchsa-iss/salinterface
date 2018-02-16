@@ -2,7 +2,7 @@
 * @Author: iss_roachd
 * @Date:   2017-12-02 09:42:21
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2018-01-04 09:48:17
+* @Last Modified time: 2018-02-13 16:09:23
 */
 
 var NetworkError = require('../Error/Error.js');
@@ -66,7 +66,7 @@ Network.prototype.execute = function(type) {
 	        var requestError = this.networkError.RESPONSE_ERROR;
 	        //log this 
 	        var errorObj = this.__handleError(requestError, msg);
-	        var localErrorMessage = jqXHR.responseJSON && jqXHR.responseJSON.error || "Unknown Error Please Contact Your IT Department";
+	        var localErrorMessage = jqXHR.responseJSON && jqXHR.responseJSON.error || errorObj && errorObj.optionalData || "Unknown Error Please Contact Your IT Department";
 	        this.callback(localErrorMessage, this.id);
 	    },
 	})

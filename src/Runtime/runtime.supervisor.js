@@ -2,9 +2,12 @@
 * @Author: iss_roachd
 * @Date:   2017-12-01 12:42:22
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2018-01-19 17:53:24
+* @Last Modified time: 2018-02-16 11:26:36
 */
 var SupervisorInterface = require('../Supervisor/interface.js');
+var Constants = require('../constants.js');
+var UI = require('../UI/UI.js');
+var Utils = require('../Utils/Utils.js');
 
 var exists = (typeof window["SupervisorInterface"] !== "undefined");
 if (!exists) {
@@ -46,10 +49,52 @@ SupervisorInterface.showTeamTable = function() {
 	supervisorInterface.getAllTeamMembers('#team-member-table');
 }
 
+SupervisorInterface.showPendingSalApprovals = function(data, errorView) {
+	var tableContainer = data.tableName + "-container";
+	$(tableContainer).hide();
+	supervisorInterface.loadMemberSals(data, function(error) {
+		if (error) {
+			UI.flashMessage(Constants.ERROR.TYPE.critical, "There Must Be A Date Selected", errorView, 500);
+			return;
+		}
+		$(data.panelDiv).show('blind', 300);
+	});
+}
+
 SupervisorInterface.showModal = function(view) {
 	$(view).modal("show");
 }
 
+SupervisorInterface.present = function(tableName, config, errorView) {
+	if (config.type === 'close') {
+		supervisorInterface[config.handler](config.closeViews);
+		return;
+	}
+	if (Utils.requiresRowSelect(config)) {
+		if (!UI.tableRowIsSelected(tableName)) {
+			return UI.flashMessage(Constants.ERROR.TYPE.critical, "Please Select At Least One Row", errorView, 2000);
+		}
+	}
+	var isModal = Utils.isModal(config);
+	if (isModal) {
+		supervisorInterface.setupModal(tableName, config, function(error, type) {
+			if (error) {
+				return UI.flashMessage(type, error, errorView, 2500);
+			}
+			$(config.modalName).modal("show");
+			return;
+		});
+	}
+	else {
+		supervisorInterface[config.handler](tableName, config, function(error, type, message, messageLocation) {
+			if (error) {
+				return UI.flashMessage(type, message, errorView, 2500);
+			}
+			UI.flashMessage(type, message, messageLocation, 2500);
+		});
+	}
+}
+// depresiate when you have time use presentModal
 SupervisorInterface.onClick = function(target, action, errorView) {
 	var error = null;
 	function isError(error) {

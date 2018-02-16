@@ -2,21 +2,31 @@
 * @Author: Daniel Roach
 * @Date:   2018-01-11 12:36:43
 * @Last Modified by:   Daniel Roach
-* @Last Modified time: 2018-01-22 16:52:09
+* @Last Modified time: 2018-02-14 15:58:30
 */
 
 var Networking = require('../../Network/NetworkRequest.js');
 
-function Modal(targetTable, modal, callback) {
-	this.element = $(modal.modalName);
-	this.submitHandler = this.submit.bind(this);
-	this.handler = $(modal.submit).on('click', this.submitHandler);
+function Modal(targetTable, config, callback) {
+	this.modalElement = $(config.modalName);
+	this.modalElement.modal({backdrop: 'static', keyboard: false});
+	if (!config.submit) {
+		this.submitElement = this.modalElement.find(':submit');
+		this.submitElement.unbind();
+		this.submitElement.on('click', this.submit.bind(this));
+		//this.submitHandler = submitHandler;
+	}
+	else {
+		this.submitHandler = this.submit.bind(this);
+		this.handler = $(config.submit).on('click', this.submitHandler);
+	}
 	this.submitCallback = callback;
 	this.currentValue = null;
-	this.errorElement = $(modal.modalName);
+	this.errorElement = $(config.modalName);
 	this.table = $(targetTable);
 	this.data = null;
 	this.selectedRow = null;
+	this.config = config;
 }
 
 Modal.prototype.prepAddSupervisor = function(callback) {
@@ -41,6 +51,36 @@ Modal.prototype.prepAddSupervisor = function(callback) {
 
 	}.bind(this));
 	allEmployees.execute();
+}
+
+Modal.prototype.prepApproveMemberSal = function(callback) {
+	this.modalElement.find('.modal-title').text("Approval");
+	this.modalElement.find(':submit').text("Approve SAL");
+	var modalBody = this.modalElement.find('.modal-body');
+	modalBody.empty();
+	modalBody.html('<div class="well"><h4>Please Confirm</h4></div>');
+	callback();
+}
+
+Modal.prototype.prepDenyMemberSal = function(callback) {
+	var table = this.table.DataTable();
+	this.selectedRow = table.row( { selected: true } );
+	this.modalElement.find('.modal-title').text("SAL Error Correction Form");
+	this.modalElement.find(':submit').text("Deny");
+	var modalBody = this.modalElement.find('.modal-body');
+	modalBody.empty();
+	modalBody.html('<form><div class="form-group"><p>Please give a description of the error found in the sal</p><h3 style="color:#777;">Error Message</h3><textarea class="form-control" id="sal-error-message" rows="4"></textarea></div></form>');
+	callback();
+}
+
+Modal.prototype.prepCreateNewUserSal = function(callback) {
+	var table = this.table.DataTable();
+	this.selectedRow = table.row( { selected: true } );
+	var data = this.selectedRow.data();
+	var employee = $('#supervisor-employee-name');
+	employee.attr("placeholder", data.FirstName + " " + data.LastName);
+	$('#supervisor-create-sal-date').datepicker({showButtonPanel: true});
+	callback();
 }
 
 Modal.prototype.prepAssignSupervisor = function(callback) {
@@ -114,7 +154,7 @@ Modal.prototype.getTable = function() {
 }
 
 Modal.prototype.dismiss = function() {
-	this.element.modal('hide');
+	this.modalElement.modal('hide');
 }
 
 Modal.prototype.updateSelection = function(element) {
@@ -122,12 +162,12 @@ Modal.prototype.updateSelection = function(element) {
 }
 
 Modal.prototype.getBootstrapSelectId = function(target) {
-	var data = this.element.find("option:selected").data();
+	var data = this.modalElement.find("option:selected").data();
 	return data.id;
 }
 
 Modal.prototype.getElementData = function(id) {
-	var el = this.element.find(id);
+	var el = this.modalElement.find(id);
 	if (el) {
 		return el.data();
 	}
